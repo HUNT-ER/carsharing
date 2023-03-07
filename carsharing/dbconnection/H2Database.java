@@ -24,14 +24,20 @@ public class H2Database {
   }
 
   private void init() {
+    final String createCompanyTableQuery = "CREATE TABLE COMPANY("
+        + "ID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+        + "NAME VARCHAR(50) NOT NULL UNIQUE);";
+    final String createCarTableQuery = "CREATE TABLE CAR("
+        + "ID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+        + "NAME VARCHAR(50) NOT NULL UNIQUE,"
+        + "COMPANY_ID INTEGER NOT NULL,"
+        + "FOREIGN KEY (COMPANY_ID) REFERENCES COMPANY(ID));";
     try (Connection conn = getConnection()) {
       Statement statement = conn.createStatement();
-      statement.execute(
-          "CREATE TABLE COMPANY("
-              + "ID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-              + "NAME VARCHAR(50) NOT NULL UNIQUE);");
+      statement.execute(createCompanyTableQuery);
+      statement.execute(createCarTableQuery);
     } catch (SQLException e) {
-      e.printStackTrace();
+      //e.printStackTrace();
     }
   }
 
