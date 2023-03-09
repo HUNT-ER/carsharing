@@ -1,30 +1,20 @@
 package carsharing.entities;
 
-public class Car {
-  private int id;
-  private String name;
-  private Company company;
+public class Car extends Entity {
 
-  public Car(int id, String name, Company company) {
+  private Company company;
+  private boolean isRented;
+  public Car(int id, String name, Company company, boolean isRented) {
     this.id = id;
     this.name = name;
     this.company = company;
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
+    this.isRented = isRented;
   }
 
   public Company getCompany() {
     return company;
   }
-
-  @Override
-  public String toString() {
-    return name;
+  public boolean isRented() {
+    return isRented;
   }
 }

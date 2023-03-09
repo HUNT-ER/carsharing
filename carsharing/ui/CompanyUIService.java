@@ -7,12 +7,8 @@ import carsharing.entities.NewCar;
 import carsharing.exceptions.CarExistsException;
 import carsharing.input.UserInputService;
 import carsharing.program.Session;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class CompanyUIService extends UIService {
 
@@ -42,32 +38,17 @@ public class CompanyUIService extends UIService {
         break;
       case 0:
         //возвращаемся назад на уровень логина
-        session.setMenu(new MainUIService(session));
+        session.setMenu(new ManagerUIService(session));
         break;
     }
   }
 
   private void chooseCar() {
-    //отбираем машины принадлежащие конкретной компании
-    List<Car> cars = new CarDao(session.getDbConnection()).getAll()
-        .stream().filter(car -> car.getCompany().getId() == company.getId())
-        .collect(Collectors.toList());
 
-    //сортируем в естественном порядке по id
-    Collections.sort(cars, Comparator.comparing(Car::getId));
+    Map<Integer, Car> menuChoice = getMenu(new CarDao(session.getDbConnection()),
+        car -> car.getCompany().getId() == company.getId(), Comparator.comparing(Car::getId));
 
-    //заполняем список компаний
-    Map<Integer, Car> menuChoice = IntStream.range(1, cars.size() + 1)
-        .boxed().collect(Collectors.toMap(i -> i, i -> cars.get(i - 1)));
-
-    //формируем финальный вывод
-    if (menuChoice.size() != 0) {
-      //распечатываем полностью все машины
-      System.out.println("\nCar list:");
-      menuChoice.forEach((k, v) -> System.out.println(k + ". " + v));
-    } else {
-      System.out.println("\nThe car list is empty!");
-    }
+    printMenu("Car list:", menuChoice);
 
   }
 
@@ -80,5 +61,10 @@ public class CompanyUIService extends UIService {
     } catch (CarExistsException e) {
       System.out.println("\nSuch car already exists.");
     }
+  }
+
+  @Override
+  protected void printIfEmpty() {
+    System.out.println("\nThe car list is empty!");
   }
 }

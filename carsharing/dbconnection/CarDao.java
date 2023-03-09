@@ -36,7 +36,13 @@ public class CarDao implements Dao<Car> {
 
   @Override
   public Optional<Car> get(int id) {
-    final String query = "SELECT * FROM CAR WHERE ID = ?";
+    final String query = ""
+        + "SELECT C.*\n"
+        + "    , CASE WHEN C1.RENTED_car_id is not null then true else false end as is_rented\n"
+        + "FROM CAR C\n"
+        + "LEFT JOIN (SELECT DISTINCT RENTED_CAR_ID FROM CUSTOMER) C1\n"
+        + "    ON C1.RENTED_CAR_ID = C.ID\n"
+        + "WHERE C.ID = ?";
     try (Connection connection = database.getConnection();
         PreparedStatement statement = connection.prepareStatement(query)) {
       statement.setInt(1, id);
@@ -44,7 +50,8 @@ public class CarDao implements Dao<Car> {
       CompanyDao companyDao = new CompanyDao(database);
       if (result.next()) {
         return Optional.of(
-            new Car(result.getInt(1), result.getString(2), companyDao.get(result.getInt(3)).get()));
+            new Car(result.getInt(1), result.getString(2),
+                companyDao.get(result.getInt(3)).get(), result.getBoolean(4)));
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -82,7 +89,12 @@ public class CarDao implements Dao<Car> {
 
   @Override
   public List<Car> getAll() {
-    final String query = "SELECT * FROM CAR";
+    final String query = ""
+        + "SELECT C.*\n"
+        + "    , CASE WHEN C1.RENTED_car_id is not null then true else false end as is_rented\n"
+        + "FROM CAR C\n"
+        + "LEFT JOIN (SELECT DISTINCT RENTED_CAR_ID FROM CUSTOMER) C1\n"
+        + "    ON C1.RENTED_CAR_ID = C.ID;\n";
     List<Car> cars = new ArrayList<>();
     try (Connection connection = database.getConnection();
         Statement statement = connection.createStatement()) {
@@ -90,8 +102,8 @@ public class CarDao implements Dao<Car> {
       ResultSet result = statement.executeQuery(query);
       CompanyDao companyDao = new CompanyDao(database);
       while (result.next()) {
-        cars.add(new Car(
-            result.getInt(1), result.getString(2), companyDao.get(result.getInt(3)).get()));
+        cars.add(new Car(result.getInt(1), result.getString(2),
+            companyDao.get(result.getInt(3)).get(), result.getBoolean(4)));
       }
     } catch (SQLException e) {
       e.printStackTrace();

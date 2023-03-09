@@ -32,10 +32,15 @@ public class H2Database {
         + "NAME VARCHAR(50) NOT NULL UNIQUE,"
         + "COMPANY_ID INTEGER NOT NULL,"
         + "FOREIGN KEY (COMPANY_ID) REFERENCES COMPANY(ID));";
-    try (Connection conn = getConnection()) {
-      Statement statement = conn.createStatement();
+    final String createCustomerTableQuery = "CREATE TABLE CUSTOMER("
+        + "ID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+        + "NAME VARCHAR(50) NOT NULL UNIQUE, "
+        + "RENTED_CAR_ID INTEGER DEFAULT NULL, "
+        + "FOREIGN KEY (RENTED_CAR_ID) REFERENCES CAR(ID));";
+    try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
       statement.execute(createCompanyTableQuery);
       statement.execute(createCarTableQuery);
+      statement.execute(createCustomerTableQuery);
     } catch (SQLException e) {
       //e.printStackTrace();
     }
