@@ -10,6 +10,9 @@ public class UserInputService {
     int input = -1;
     try {
       input = scanner.nextInt();
+      if (input < -1) {
+        return -1;
+      }
     } catch (InputMismatchException e) {
       return input;
     }
@@ -18,6 +21,9 @@ public class UserInputService {
 
   public static String getStringInput() {
     Scanner scanner = new Scanner(System.in);
-    return scanner.nextLine();
+    if (scanner.hasNextLine()) {
+      return scanner.nextLine();
+    }
+    return "";
   }
 }
