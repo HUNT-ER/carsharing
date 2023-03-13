@@ -16,6 +16,12 @@ public class Session {
     menu = new LogInUIService(this);
   }
 
+  public Session() {
+    dbConnection = new H2Database();
+    isClosed = false;
+    menu = new LogInUIService(this);
+  }
+
   public void setMenu(UIService menu) {
     this.menu = menu;
   }
@@ -32,5 +38,13 @@ public class Session {
     while (!isClosed) {
       menu.showUI();
     }
+  }
+
+  public boolean isClosed() {
+    return isClosed;
+  }
+
+  public UIService getMenu() {
+    return menu;
   }
 }

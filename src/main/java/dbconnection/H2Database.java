@@ -1,54 +1,60 @@
 package dbconnection;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Objects;
 
 public class H2Database {
 
-  private final String dbPath = "jdbc:h2:C:\\Users\\Sasha\\IdeaProjects\\Car Sharing"
-      + "\\Car Sharing\\task\\src\\main\\java\\carsharing\\db\\";
-  private String URL;
+  private final String DB_URL = "jdbc:h2:C:\\Users\\Sasha\\IdeaProjects\\carsharing\\src\\main\\resources\\";
+  private final String FILE_PATH = "C:\\Users\\Sasha\\IdeaProjects\\carsharing\\src\\main\\resources\\";
+  private final String DEFAULT_DB = "cars";
+  private String dbFullUrl;
+  private String dbFileName;
 
   public H2Database(String dbFileName) {
-    URL = dbPath + dbFileName.trim();
-    try {
-      init();
-    } catch (SQLException e) {
-      //не критичное исключение, создание существующих таблиц
+    this.dbFileName = dbFileName;
+    dbFullUrl = DB_URL + dbFileName.trim();
+    if (!isExistDbFile(FILE_PATH + dbFileName.trim())) {
+      dbFullUrl = DB_URL + DEFAULT_DB;
     }
   }
 
-  public void setUrl(String dbFileName) {
-    URL = dbPath + dbFileName.trim();
+  public H2Database() {
+    dbFullUrl = DB_URL + DEFAULT_DB;
   }
 
   public Connection getConnection() throws SQLException {
-    return DriverManager.getConnection(URL);
+    return DriverManager.getConnection(dbFullUrl);
   }
 
-  private void init() throws SQLException {
-    final String createCompanyTableQuery = "CREATE TABLE COMPANY("
-        + "ID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-        + "NAME VARCHAR(50) NOT NULL UNIQUE);";
-    final String createCarTableQuery = "CREATE TABLE CAR("
-        + "ID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,"
-        + "NAME VARCHAR(50) NOT NULL UNIQUE,"
-        + "COMPANY_ID INTEGER NOT NULL,"
-        + "FOREIGN KEY (COMPANY_ID) REFERENCES COMPANY(ID));";
-    final String createCustomerTableQuery = "CREATE TABLE CUSTOMER("
-        + "ID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, "
-        + "NAME VARCHAR(50) NOT NULL UNIQUE, "
-        + "RENTED_CAR_ID INTEGER DEFAULT NULL, "
-        + "FOREIGN KEY (RENTED_CAR_ID) REFERENCES CAR(ID));";
-    try (Connection conn = getConnection(); Statement statement = conn.createStatement()) {
-      statement.execute(createCompanyTableQuery);
-      statement.execute(createCarTableQuery);
-      statement.execute(createCustomerTableQuery);
-    } catch (SQLException e) {
-      throw new SQLException(e);
+  public String getDbFileName() {
+    if (dbFileName == null) {
+      return DEFAULT_DB;
     }
+    return dbFileName;
   }
 
+  private boolean isExistDbFile(String filePath) {
+    return new File(filePath + ".mv.db").exists();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof H2Database)) {
+      return false;
+    }
+    H2Database that = (H2Database) o;
+    return dbFullUrl.equals(that.dbFullUrl);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(dbFullUrl);
+  }
 }

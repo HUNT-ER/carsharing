@@ -1,5 +1,5 @@
-import static input.UserInputService.getStringInput;
 import static input.UserInputService.getIntInput;
+import static input.UserInputService.getStringInput;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class UserInputServiceTest {
+
   private static InputStream sysInput;
 
   @BeforeAll
@@ -67,7 +68,6 @@ public class UserInputServiceTest {
     System.setIn(in);
 
     Assertions.assertEquals("", getStringInput());
-
   }
 
 }
