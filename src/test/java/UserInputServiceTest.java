@@ -3,18 +3,20 @@ import static input.UserInputService.getStringInput;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Scanner;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class UserInputServiceTest {
 
-  private static InputStream sysInput;
+  private static InputStream sysInput = System.in;
+  private Scanner scanner;
 
-  @BeforeAll
-  public static void backupSystemIn() {
-    sysInput = System.in;
+  @BeforeEach
+  public void setScanner() {
+    scanner = new Scanner(System.in);
   }
 
   @AfterAll
@@ -22,52 +24,60 @@ public class UserInputServiceTest {
     System.setIn(sysInput);
   }
 
-  @Test
-  public void getIntInputShouldReturnDefaultValueIfInputIsString() {    // default value is -1;
-    ByteArrayInputStream inputString = new ByteArrayInputStream("st".getBytes());
-    System.setIn(inputString);
+  public void provideInput(String input) {
+    ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
+    System.setIn(in);
+    scanner = new Scanner(in);
+  }
 
-    Assertions.assertEquals(-1, getIntInput());
+  @Test
+  public void getIntInputShouldReturnDefaultValueIfInputIsString() {
+    provideInput("string");
+    // default value is -1;
+    Assertions.assertEquals(-1, getIntInput(scanner));
   }
 
   @Test
   public void getIntInputShouldReturnDefaultValueIfInputIsNegative() {
-    ByteArrayInputStream inputNegativeInt = new ByteArrayInputStream("-2".getBytes());
-    System.setIn(inputNegativeInt);
-
-    Assertions.assertEquals(-1, getIntInput());
+    provideInput("-2");
+    Assertions.assertEquals(-1, getIntInput(scanner));
   }
 
   @Test
   public void getIntInputShouldReturnDefaultValueIfInputIsLong() {
-    ByteArrayInputStream inputNegativeInt = new ByteArrayInputStream("100000000000000".getBytes());
-    System.setIn(inputNegativeInt);
-
-    Assertions.assertEquals(-1, getIntInput());
+    provideInput("100000000000000");
+    Assertions.assertEquals(-1, getIntInput(scanner));
   }
 
   @Test
   public void getIntInputShouldReturnSameIntValue() {
-    ByteArrayInputStream in = new ByteArrayInputStream("100".getBytes());
-    System.setIn(in);
-
-    Assertions.assertEquals(100, getIntInput());
+    provideInput("100");
+    Assertions.assertEquals(100, getIntInput(scanner));
   }
 
   @Test
   public void getStringInputShouldReturnSameString() {
-    ByteArrayInputStream in = new ByteArrayInputStream("sad".getBytes());
-    System.setIn(in);
-
-    Assertions.assertEquals("sad", getStringInput());
+    provideInput("sad");
+    Assertions.assertEquals("sad", getStringInput(scanner));
   }
 
   @Test
   public void getStringInputShouldReturnEmptyStringIfInputIsEmpty() {
-    ByteArrayInputStream in = new ByteArrayInputStream("".getBytes());
-    System.setIn(in);
+    provideInput(System.lineSeparator());
 
-    Assertions.assertEquals("", getStringInput());
+    Assertions.assertEquals("", getStringInput(scanner));
+  }
+
+  @Test
+  public void multipleInputShouldNotContainsOtherInputs() {
+    provideInput("2\n3\nsdk");
+
+    int i = getIntInput(scanner);
+    int j = getIntInput(scanner);
+    String s = getStringInput(scanner);
+    String sd = getStringInput(scanner);
+
+    System.out.println(i + " " + j + " " + s + sd);
   }
 
 }
