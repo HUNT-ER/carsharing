@@ -23,7 +23,7 @@ public class UserInputService {
   public static String getStringInput(Scanner scanner) {
     if (scanner.hasNextLine()) {
       String input = scanner.nextLine();
-      return "".equals(input) ? scanner.nextLine() : input;
+      return ("".equals(input) ? (scanner.hasNextLine() ? scanner.nextLine() : input) : input);
     }
     return "";
   }

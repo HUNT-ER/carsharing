@@ -1,6 +1,7 @@
 import dbconnection.H2Database;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Scanner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,12 +16,12 @@ public class SessionTest {
   private Session sessionWithArg;
 
   @BeforeEach
-  private void sessionWithArgs() {
+  public void sessionWithArgs() {
     sessionWithArg = new Session("test");
   }
 
   @BeforeEach
-  private void setSessionWithoutArgs() {
+  public void setSessionWithoutArgs() {
     sessionWithoutArg = new Session();
   }
 
@@ -72,6 +73,7 @@ public class SessionTest {
     InputStream sysIn = System.in;
     ByteArrayInputStream input = new ByteArrayInputStream("0".getBytes());
     System.setIn(input);
+    sessionWithoutArg.getMenu().setScanner(new Scanner(input));
     sessionWithoutArg.start();
 
     Assertions.assertEquals(true, sessionWithoutArg.isClosed());
