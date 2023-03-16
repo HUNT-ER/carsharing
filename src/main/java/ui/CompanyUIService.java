@@ -20,11 +20,13 @@ public class CompanyUIService extends UIService {
   }
 
   @Override
-  public void showMenu() {
-    System.out.println("\n'" + company + "' company\n"
+  public String showMenu() {
+    String menu = "\n'" + company + "' company\n"
         + "1. Car list\n"
         + "2. Create a car\n"
-        + "0. Back");
+        + "0. Back\n";
+    System.out.println(menu);
+    return menu;
   }
 
   @Override
@@ -56,7 +58,7 @@ public class CompanyUIService extends UIService {
     System.out.println("\nEnter the car name:");
     CarDao carDao = new CarDao(session.getDbConnection());
     try {
-      carDao.save(new NewCar(UserInputService.getStringInput(), company));
+      carDao.save(new NewCar(UserInputService.getStringInput(scanner), company));
       System.out.println("The car was added!");
     } catch (CarExistsException e) {
       System.out.println("\nSuch car already exists.");
@@ -64,7 +66,9 @@ public class CompanyUIService extends UIService {
   }
 
   @Override
-  protected void printIfEmpty() {
-    System.out.println("\nThe car list is empty!");
+  protected String printIfEmpty() {
+    String output = "\nThe car list is empty!";
+    System.out.println(output);
+    return output;
   }
 }

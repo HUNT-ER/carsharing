@@ -13,8 +13,8 @@ public class CarUIService extends UIService{
   }
 
   @Override
-  public void showMenu() {
-
+  public String showMenu() {
+    return "";
   }
 
   @Override

@@ -16,10 +16,12 @@ public class ManagerUIService extends UIService {
   }
 
   @Override
-  public void showMenu() {
-    System.out.println("\n1. Company list\n"
+  public String showMenu() {
+    String menu = "\n1. Company list\n"
         + "2. Create a company\n"
-        + "0. Back");
+        + "0. Back";
+    System.out.println(menu);
+    return menu;
   }
 
   @Override
@@ -51,7 +53,7 @@ public class ManagerUIService extends UIService {
     System.out.println("Enter the company name:");
     CompanyDao companyDao = new CompanyDao(session.getDbConnection());
     try {
-      companyDao.save(new NewCompany(UserInputService.getStringInput()));
+      companyDao.save(new NewCompany(UserInputService.getStringInput(scanner)));
       System.out.println("The company was created!");
     } catch (CompanyExistsException e) {
       System.out.println("\nSuch company already exists.");
@@ -59,7 +61,9 @@ public class ManagerUIService extends UIService {
   }
 
   @Override
-  protected void printIfEmpty() {
-    System.out.println("\nThe company list is empty");
+  protected String printIfEmpty() {
+    String output = "\nThe company list is empty";
+    System.out.println(output);
+    return output;
   }
 }

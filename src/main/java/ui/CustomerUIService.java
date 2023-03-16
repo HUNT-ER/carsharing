@@ -20,12 +20,18 @@ public class CustomerUIService extends UIService {
     this.customer = customer;
   }
 
+  public Customer getCustomer() {
+    return customer;
+  }
+
   @Override
-  public void showMenu() {
-    System.out.println("\n1. Rent a car\n"
+  public String showMenu() {
+    String menu = "\n1. Rent a car\n"
         + "2. Return a rented car\n"
         + "3. My rented car\n"
-        + "0. Back");
+        + "0. Back\n";
+    System.out.println(menu);
+    return menu;
   }
 
   @Override
@@ -56,7 +62,6 @@ public class CustomerUIService extends UIService {
     Map<Integer, Company> companies = getMenu(new CompanyDao(session.getDbConnection()),
         company -> true, Comparator.comparing(Company::getId));
 
-
     //выводим выбор компании
     Consumer<Integer> companyAction = compChoice -> {
       Company company = companies.get(compChoice);
@@ -77,7 +82,6 @@ public class CustomerUIService extends UIService {
 
     //печатаем меню возможных компаний
     printMenuAndMakeChoice("Choose a company:", companies, companyAction);
-
   }
 
   private void returnRentedCar() {

@@ -1,6 +1,7 @@
 package dbconnection;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -20,6 +21,9 @@ public class H2Database {
     if (!isExistDbFile(FILE_PATH + dbFileName.trim())) {
       dbFullUrl = DB_URL + DEFAULT_DB;
     }
+  }
+
+  public H2Database(Path path) {
   }
 
   public H2Database() {

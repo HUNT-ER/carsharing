@@ -6,5 +6,4 @@ public class Company extends Entity {
     this.id = id;
     this.name = name;
   }
-
 }

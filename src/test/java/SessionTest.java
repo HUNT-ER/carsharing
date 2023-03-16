@@ -15,12 +15,12 @@ public class SessionTest {
   private Session sessionWithArg;
 
   @BeforeEach
-  public void sessionWithArgs() {
+  private void sessionWithArgs() {
     sessionWithArg = new Session("test");
   }
 
   @BeforeEach
-  public void setSessionWithoutArgs() {
+  private void setSessionWithoutArgs() {
     sessionWithoutArg = new Session();
   }
 

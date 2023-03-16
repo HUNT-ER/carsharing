@@ -5,24 +5,25 @@ import java.util.Scanner;
 
 public class UserInputService {
 
-  public static int getIntInput() {
-    Scanner scanner = new Scanner(System.in);
+  public static int getIntInput(Scanner scanner) {
     int input = -1;
-    try {
-      input = scanner.nextInt();
-      if (input < -1) {
-        return -1;
+    if (scanner.hasNext()) {
+      try {
+        input = scanner.nextInt();
+        if (input < -1) {
+          return -1;
+        }
+      } catch (InputMismatchException e) {
+        return input;
       }
-    } catch (InputMismatchException e) {
-      return input;
     }
     return input;
   }
 
-  public static String getStringInput() {
-    Scanner scanner = new Scanner(System.in);
+  public static String getStringInput(Scanner scanner) {
     if (scanner.hasNextLine()) {
-      return scanner.nextLine();
+      String input = scanner.nextLine();
+      return "".equals(input) ? scanner.nextLine() : input;
     }
     return "";
   }

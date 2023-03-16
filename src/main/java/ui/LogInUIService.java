@@ -1,5 +1,6 @@
 package ui;
 
+import com.sun.source.tree.ReturnTree;
 import dbconnection.CustomerDao;
 import entities.Customer;
 import entities.NewCustomer;
@@ -16,11 +17,13 @@ public class LogInUIService extends UIService {
   }
 
   @Override
-  public void showMenu() {
-    System.out.println("\n1. Log in as a manager\n"
+  public String showMenu() {
+    String menu = "\n1. Log in as a manager\n"
         + "2. Log in as a customer\n"
         + "3. Create a customer\n"
-        + "0. Exit");
+        + "0. Exit";
+    System.out.println(menu);
+    return menu;
   }
 
   @Override
@@ -51,17 +54,19 @@ public class LogInUIService extends UIService {
 
   private void createCustomer() {
     System.out.println("\nEnter the customer name:");
-    CustomerDao customerDao = new CustomerDao(session.getDbConnection());
     try {
-      customerDao.save(new NewCustomer(UserInputService.getStringInput()));
-      System.out.println("The customer was added!");
+      CustomerDao customerDao = new CustomerDao(session.getDbConnection());
+      customerDao.save(new NewCustomer(UserInputService.getStringInput(scanner)));
+      System.out.println("\nThe customer was added!");
     } catch (CustomerExistsException e) {
       System.out.println("\nSuch customer already exists.");
     }
   }
 
   @Override
-  protected void printIfEmpty() {
-    System.out.println("\nThe customer list is empty!");
+  protected String printIfEmpty() {
+    String output = "\nThe customer list is empty!";
+    System.out.println(output);
+    return output;
   }
 }
