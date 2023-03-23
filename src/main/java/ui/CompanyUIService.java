@@ -14,6 +14,10 @@ public class CompanyUIService extends UIService {
 
   private Company company;
 
+  public Company getCompany() {
+    return company;
+  }
+
   public CompanyUIService(Session session, Company company) {
     super(session);
     this.company = company;
