@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -41,11 +44,11 @@ public class ManagerUIServiceTest {
     setManagerUi("test_db");
   }
 
-  public void setManagerUi(String dbName) {
-    session = new Session(dbName);
-    managerUI = new ManagerUIService(session);
+  @BeforeEach
+  public void setOutput() {
+    out = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(out));
   }
-
 
   @AfterEach
   public void deleteTestDb() throws IOException {
@@ -60,6 +63,11 @@ public class ManagerUIServiceTest {
     System.setOut(SYSTEM_OUT);
   }
 
+  public void setManagerUi(String dbName) {
+    session = new Session(dbName);
+    managerUI = new ManagerUIService(session);
+  }
+
   private void provideInput(String input) {
     in = new ByteArrayInputStream(input.getBytes());
     System.setIn(in);
@@ -67,14 +75,22 @@ public class ManagerUIServiceTest {
     session.setMenu(managerUI);
   }
 
-  @BeforeEach
-  public void setOutput() {
-    out = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(out));
-  }
-
   private String getOutput() {
     return out.toString();
+  }
+
+  @Test
+  public void shouldPrintEmptyListMessage() throws SQLException {
+    String expectedMessage = "\nThe company list is empty" + System.lineSeparator();
+    try (Connection conn = session.getDbConnection().getConnection();
+        Statement statement = conn.createStatement()) {
+      statement.execute("ALTER TABLE COMPANY DROP CONSTRAINT CONSTRAINT_103");
+      statement.execute("DELETE FROM COMPANY");
+    } catch (SQLException e) {
+      throw new SQLException();
+    }
+    managerUI.chooseMenu(1);
+    Assertions.assertEquals(expectedMessage, getOutput());
   }
 
   @Test
@@ -99,7 +115,7 @@ public class ManagerUIServiceTest {
         + "The company was created!" + System.lineSeparator();
     String newCompaniesList =
         "\nChoose the company:\n1. Sanya\n2. Second\n3. Thirds\n4. SSd\n5. lol\n6. New company\n0. Back"
-        + System.lineSeparator();
+            + System.lineSeparator();
     provideInput("New company\n0");
     managerUI.chooseMenu(2);
     Assertions.assertEquals(createCompanyOutput, getOutput());
